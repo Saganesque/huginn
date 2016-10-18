@@ -11,7 +11,8 @@ Huginn is a system for building agents that perform automated tasks for you onli
 #### Here are some of the things that you can do with Huginn:
 
 * Track the weather and get an email when it's going to rain (or snow) tomorrow ("Don't forget your umbrella!")
-* List terms that you care about and receive emails when their occurrence on Twitter changes.  (For example, want to know when something interesting has happened in the world of Machine Learning?  Huginn will watch the term "machine learning" on Twitter and tell you when there is a spike in discussion.)
+s List terms that you care about and receive emails when their occurrence on Twitter changes.  (For example, want to know when something interesting has happened in the world of Machine Learning?  Huginn will watch the term "machine learning" on Twitter and tell you when there is a spike in discussion.)
+  </header>
 * Watch for air travel or shopping deals
 * Follow your project names on Twitter and get updates when people mention them
 * Scrape websites and receive emails when they change
