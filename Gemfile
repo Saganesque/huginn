@@ -42,8 +42,9 @@ gem 'hypdf', '~> 1.0.10'          # PDFInfoAgent
 gem 'weibo_2', github: 'dsander/weibo_2', branch: 'master'
 
 # GoogleCalendarPublishAgent
-gem "google-api-client", require: 'google/api_client'
+#gem "google-api-client", require: 'google/api_client'
 
+gem 'google-api-client', '~> 0.9'
 # Twitter Agents
 gem 'twitter', '~> 5.14.0' # Must to be loaded before cantino-twitter-stream.
 gem 'twitter-stream', github: 'cantino/twitter-stream', branch: 'huginn'
