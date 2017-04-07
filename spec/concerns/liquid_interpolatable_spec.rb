@@ -119,6 +119,15 @@ describe LiquidInterpolatable::Filters do
       @agent.interpolation_context['s'] = 'foo/index.html'
       expect(@agent.interpolated['foo']).to eq('/dir/foo/index.html')
     end
+
+    it 'should normalize a URI value if an empty base URI is given' do
+      @agent.options['foo'] = '{{ u | to_uri: b }}'
+      @agent.interpolation_context['u'] = "\u{3042}"
+      @agent.interpolation_context['b'] = ""
+      expect(@agent.interpolated['foo']).to eq('%E3%81%82')
+      @agent.interpolation_context['b'] = nil
+      expect(@agent.interpolated['foo']).to eq('%E3%81%82')
+    end
   end
 
   describe 'uri_expand' do
@@ -321,6 +330,44 @@ describe LiquidInterpolatable::Filters do
         agent.options['object'] = "{{something | as_object}}"
         expect(agent.interpolated['object']).to eq(ensure_safety(uri.to_liquid.as_json.stringify_keys))
       end
+    end
+  end
+
+  describe 'rebase_hrefs' do
+    let(:agent) { Agents::InterpolatableAgent.new(name: "test") }
+
+    let(:fragment) { <<HTML }
+<ul>
+  <li>
+    <a href="downloads/file1"><img src="/images/iconA.png" srcset="/images/iconA.png 1x, /images/iconA@2x.png 2x">file1</a>
+  </li>
+  <li>
+    <a href="downloads/file2"><img src="/images/iconA.png" srcset="/images/iconA.png 1x, /images/iconA@2x.png 2x">file2</a>
+  </li>
+  <li>
+    <a href="downloads/file3"><img src="/images/iconB.png" srcset="/images/iconB.png 1x, /images/iconB@2x.png 2x">file3</a>
+  </li>
+</ul>
+HTML
+
+    let(:replaced_fragment) { <<HTML }
+<ul>
+  <li>
+    <a href="http://example.com/support/downloads/file1"><img src="http://example.com/images/iconA.png" srcset="http://example.com/images/iconA.png 1x, http://example.com/images/iconA@2x.png 2x">file1</a>
+  </li>
+  <li>
+    <a href="http://example.com/support/downloads/file2"><img src="http://example.com/images/iconA.png" srcset="http://example.com/images/iconA.png 1x, http://example.com/images/iconA@2x.png 2x">file2</a>
+  </li>
+  <li>
+    <a href="http://example.com/support/downloads/file3"><img src="http://example.com/images/iconB.png" srcset="http://example.com/images/iconB.png 1x, http://example.com/images/iconB@2x.png 2x">file3</a>
+  </li>
+</ul>
+HTML
+
+    it 'rebases relative URLs in a fragment' do
+      agent.interpolation_context['content'] = fragment
+      agent.options['template'] = "{{ content | rebase_hrefs: 'http://example.com/support/files.html' }}"
+      expect(agent.interpolated['template']).to eq(replaced_fragment)
     end
   end
 end

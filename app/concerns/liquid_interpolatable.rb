@@ -129,10 +129,11 @@ module LiquidInterpolatable
     # userinfo, host, port, registry, path, opaque, query, and
     # fragment.
     def to_uri(uri, base_uri = nil)
-      if base_uri
-        Utils.normalize_uri(base_uri) + Utils.normalize_uri(uri.to_s)
-      else
+      case base_uri
+      when nil, ''
         Utils.normalize_uri(uri.to_s)
+      else
+        Utils.normalize_uri(base_uri) + Utils.normalize_uri(uri.to_s)
       end
     rescue URI::Error
       nil
@@ -187,6 +188,11 @@ module LiquidInterpolatable
       logger.error "Too many rediretions in #{__method__}(#{url.inspect}) [uri=#{uri.to_s.inspect}]"
 
       url
+    end
+
+    # Rebase URIs contained in attributes in a given HTML fragment
+    def rebase_hrefs(input, base_uri)
+      Utils.rebase_hrefs(input, base_uri) rescue input
     end
 
     # Unescape (basic) HTML entities in a string
